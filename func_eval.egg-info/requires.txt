@@ -1,0 +1,7 @@
+tqdm
+numpy
+torch
+scipy
+wandb
+tensorboard
+pytorch_lightning

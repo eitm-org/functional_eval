@@ -4,7 +4,7 @@ setup(
       name='func_eval',
       version='0.0.1',
       description='functional evaluation pipeline for SALT workflow',
-      packages=find_packages(),
+      packages=['physiochemical'],
       install_requires=[
             'tqdm',
             'numpy',

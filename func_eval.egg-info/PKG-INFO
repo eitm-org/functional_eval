@@ -1,0 +1,11 @@
+Metadata-Version: 2.1
+Name: func_eval
+Version: 0.0.1
+Summary: functional evaluation pipeline for SALT workflow
+Requires-Dist: tqdm
+Requires-Dist: numpy
+Requires-Dist: torch
+Requires-Dist: scipy
+Requires-Dist: wandb
+Requires-Dist: tensorboard
+Requires-Dist: pytorch_lightning

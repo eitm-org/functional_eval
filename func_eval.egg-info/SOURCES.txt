@@ -1,0 +1,9 @@
+README.md
+setup.py
+func_eval.egg-info/PKG-INFO
+func_eval.egg-info/SOURCES.txt
+func_eval.egg-info/dependency_links.txt
+func_eval.egg-info/requires.txt
+func_eval.egg-info/top_level.txt
+physiochemical/__init__.py
+physiochemical/protparam.py
