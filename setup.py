@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-      name='func_eval',
+      name='functional_eval',
       version='0.0.1',
       description='functional evaluation pipeline for SALT workflow',
       packages=['physiochemical'],
