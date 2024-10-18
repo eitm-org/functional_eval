@@ -1,12 +1,14 @@
+import glob
+
 import pandas as pd
 import sys, os
 from Bio.SeqUtils.ProtParam import ProteinAnalysis
 from Bio import SeqIO
 
-def make_row(dict, dir, PDBFile, pH = []):
+def make_row(dict, PDBFile, pH = []):
     sequence = ""
 
-    with open(dir + 'folding/' + PDBFile, 'r') as pdb_file:
+    with open(PDBFile, 'r') as pdb_file:
         for record in SeqIO.parse(pdb_file, 'pdb-atom'):
             sequence += str(record.seq)
 
@@ -26,15 +28,15 @@ def make_row(dict, dir, PDBFile, pH = []):
     if len(pH) > 0:
         for p in pH: 
             params['charge_at_pH_'+str(p)] = analysis.charge_at_pH(p)
-
-    dict[PDBFile] = params
+    pdb_name = os.path.basename(PDBFile).strip('.pdb')
+    dict[pdb_name] = params
     return dict
 
 def eval(dir, pH_list):
 
-    files =  os.listdir(dir + "folding/")
+    files =  glob.glob(os.path.join(dir, 'designability_eval', 'designs', '*.pdb'))
     props_dict = {}
     for PDBFile in files:
-        props_dict = make_row(props_dict, dir, PDBFile, pH_list)
+        props_dict = make_row(props_dict, PDBFile, pH_list)
 
-    pd.DataFrame.from_dict(props_dict, orient = 'index').to_csv(dir + "functional_eval/protparam.csv")
+    pd.DataFrame.from_dict(props_dict, orient = 'index').to_csv(os.path.join(dir, "functional_eval/protparam.csv"))
