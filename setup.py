@@ -12,7 +12,6 @@ setup(
             'scipy',
             'wandb',
             'tensorboard',
-            'pytorch_lightning',
-            'ruamel.yaml',
+            'pytorch_lightning'
       ],
 )
