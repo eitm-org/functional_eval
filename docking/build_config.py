@@ -1,7 +1,7 @@
 from pathlib import Path
 from haddock.gear.config import load, save
-from utils import passive_from_active
-from utils import active_passive_to_ambig
+from docking.utils import passive_from_active
+from docking.utils import active_passive_to_ambig
 
 ## REPLACE WITH KENNETH'S CODE
 def convert_motif_to_dict(motif_specs):
