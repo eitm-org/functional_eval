@@ -1,9 +1,9 @@
-import toml, tomlkit
 from pathlib import Path
-from haddock3.src.haddock.gear.config import load, save
+from haddock.gear.config import load, save
 from utils import passive_from_active
 from utils import active_passive_to_ambig
 
+## REPLACE WITH KENNETH'S CODE
 def convert_motif_to_dict(motif_specs):
     return {"name": "8HGO", 
             "structures": [{"type": "scaffold", "min_length": 0, "max_length": 72}, 
@@ -44,41 +44,6 @@ def generate_tbl(ambig_fname, molecules, motif_specs, residue_specs):
     return ambig_fname
 
 def build_config(out_dir, config_file, ambig_fname, molecules, motif_specs, residue_specs):
-
-    inp = """\
-    run_dir: 
-    mode: local
-    ncores: 40
-    molecules: []
-
-    topoaa:
-        autohis: true
-
-    rigidbody:
-        ambig_fname: 
-        sampling: 20
-        tolerance: 20
-
-    caprieval.1: {}
-
-    flexref:
-        ambig_fname: 
-        tolerance: 20
-
-    caprieval.2: {}
-
-    emref:
-        ambig_fname: 
-        tolerance: 20
-
-    clustfcc:
-        min_population: 1
-
-    caprieval.3: {}
-    """
-
-    # yaml = YAML()
-    # config = yaml.load(inp)
 
     config_path = Path(config_file)
     config_dict = load(config_path)['loaded_cleaned_input']

@@ -13,5 +13,6 @@ setup(
             'wandb',
             'tensorboard',
             'pytorch_lightning',
+            'ruamel.yaml',
       ],
 )
