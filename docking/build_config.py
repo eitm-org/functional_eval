@@ -6,7 +6,6 @@ from haddock.gear.config import load, save
 from docking.utils import passive_from_active
 from docking.utils import active_passive_to_ambig
 
-## REPLACE WITH KENNETH'S CODE
 def convert_motif_to_dict(input_str, name):
     input_ranges = input_str.split('/')
     structures = []
@@ -101,8 +100,12 @@ def select_chain(out_dir, fpath, chain_set):
                 if line[21] in chain_set:
                     pdb_file.write(line)
 
-
 def build_config(out_dir, config_file, molecules, chains, motif_specs, residue_specs):
+
+    try:
+        os.makedirs(Path(out_dir, "docking"))
+    except OSError:
+        pass
 
     if len(chains) == 2:
         if chains[0] != ["ALL"]:
@@ -121,7 +124,7 @@ def build_config(out_dir, config_file, molecules, chains, motif_specs, residue_s
     config_dict['molecules'] = molecules
 
     ambig_fname = Path(out_dir, "docking", "ambig_fname")
-    generate_tbl(ambig_fname, molecules, motif_specs, residue_specs)
+    generate_tbl(ambig_fname, molecules, motif_specs[0], residue_specs)
 
     config_dict['rigidbody.1']['ambig_fname'] = ambig_fname   # it0
     config_dict['flexref.1']['ambig_fname'] = ambig_fname   # it1
