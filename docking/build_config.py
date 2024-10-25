@@ -1,18 +1,57 @@
 import os
 import sys
+import re
 from pathlib import Path
 from haddock.gear.config import load, save
 from docking.utils import passive_from_active
 from docking.utils import active_passive_to_ambig
-from pdbtools import pdb_selchain
 
 ## REPLACE WITH KENNETH'S CODE
-def convert_motif_to_dict(motif_specs):
-    return {"name": "8HGO", 
-            "structures": [{"type": "scaffold", "min_length": 0, "max_length": 72}, 
-                           {"type": "motif", "chain": "C", "start_index": 24, "end_index": 51, "group": "A"}, 
-                           {"type": "scaffold", "min_length": 0, "max_length": 72}], 
-            "min_total_length": 100, "max_total_length": 100} 
+def convert_motif_to_dict(input_str, name):
+    input_ranges = input_str.split('/')
+    structures = []
+
+    total_min_length = 0
+    total_max_length = 0
+
+    # Match chain letters
+    pattern = re.compile(r'([A-Z])?(\d+)-(\d+)')
+
+    for r in input_ranges:
+        match = pattern.match(r)
+        if match:
+            chain, start, end = match.groups()
+            start = int(start)
+            end = int(end)
+            if chain:
+                # Add motif with chain info
+                structures.append({
+                    "type": "motif",
+                    "chain": chain,
+                    "start_index": start,
+                    "end_index": end,
+                    "group": chain
+                })
+            else:
+                # Add scaffold without chain info
+                structures.append({
+                    "type": "scaffold",
+                    "min_length": start,
+                    "max_length": end
+                })
+            # For now, default max and min to the actual total values
+            total_min_length += start
+            total_max_length += end
+
+    # Build the final dictionary
+    result = {
+        "name": name,
+        "structures": structures,
+        "min_total_length": total_min_length,
+        "max_total_length": total_max_length
+    }
+
+    return result
 
 def generate_tbl(ambig_fname, molecules, motif_specs, residue_specs):
 
@@ -35,7 +74,8 @@ def generate_tbl(ambig_fname, molecules, motif_specs, residue_specs):
             
 
     if motif_specs != None: # user gives list with active / passive residues
-        mol1_dict = convert_motif_to_dict(motif_specs)
+
+        mol1_dict = convert_motif_to_dict(motif_specs, Path(molecules[0]).stem)
         mol1_active_list = []
 
         for struct in mol1_dict['structures']:
@@ -46,6 +86,7 @@ def generate_tbl(ambig_fname, molecules, motif_specs, residue_specs):
     ambig_fname = active_passive_to_ambig.active_passive_to_ambig(ambig_fname, mol1_active_list, mol1_passive_list, mol2_active_list, mol2_passive_list)
     return ambig_fname
 
+# code adapted from pdb-tools (haddock suite)
 def select_chain(out_dir, fpath, chain_set):
     residues = []
     records = ('ATOM', 'HETATM', 'TER', 'ANISOU')
@@ -74,7 +115,6 @@ def build_config(out_dir, config_file, molecules, chains, motif_specs, residue_s
     config_path = "docking_inputs/config.cfg"
     config_dict = load(config_path)['loaded_cleaned_input']
     config_path = Path(out_dir, "docking", config_file)
-
 
     run_name = "run-" + Path(molecules[0]).stem + "-" + Path(molecules[1]).stem
     config_dict['run_dir'] = Path(out_dir, "docking", run_name)
