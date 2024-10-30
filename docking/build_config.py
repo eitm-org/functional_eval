@@ -57,23 +57,27 @@ def generate_tbl(ambig_fname, molecules, motif_specs, residue_specs):
     mol1 = molecules[0]
     mol2 = molecules[1]
 
-    if residue_specs != None: # determining active / passive residues using motif specs
+    if residue_specs != None or len(residue_specs) == 0 or len(residue_specs) > 2: # determining active / passive residues using motif specs
         if len(residue_specs) == 1:
             mol2_active_list = residue_specs[0]
             mol2_passive_list = passive_from_active.run(pdb_file = mol2, active_list=mol2_active_list)
             
         elif len(residue_specs) == 2:
+            # overrides active residues determined from config file and sets them based on user provided list
+
             mol1_active_list = residue_specs[0]
             mol2_active_list = residue_specs[1]
 
             mol1_passive_list = passive_from_active.run(pdb_file = mol1, active_list=mol1_active_list)
             mol2_passive_list = passive_from_active.run(pdb_file = mol2, active_list=mol2_active_list)
-        else:
-            raise Exception('Specify a list of active residues for non-generated protein or both proteins')
+
+            motif_specs = None
+    else:
+        raise Exception('Specify a list of active residues for non-generated protein or both proteins')
             
 
-    if motif_specs != None: # user gives list with active / passive residues
-
+    if motif_specs != None:
+        # pulling configs from diffusion motif specification
         mol1_dict = convert_motif_to_dict(motif_specs, Path(molecules[0]).stem)
         mol1_active_list = []
 
@@ -93,12 +97,15 @@ def select_chain(out_dir, fpath, chain_set):
     with open(fpath, 'r') as pdb_file:
         residues = pdb_file.readlines()
 
-    file = os.path.basename(fpath)
-    with open(Path(out_dir, "docking", file), 'w') as pdb_file:
+    molname = os.path.basename(fpath)
+    with open(Path(out_dir, molname), 'w') as pdb_file:
         for line in residues:
             if line.startswith(records):
-                if line[21] in chain_set:
-                    pdb_file.write(line)
+                if line[21] not in chain_set:
+                    continue
+            pdb_file.write(line)
+    
+    return Path(out_dir, molname)
 
 def build_config(out_dir, config_file, molecules, chains, motif_specs, residue_specs):
 
@@ -107,23 +114,31 @@ def build_config(out_dir, config_file, molecules, chains, motif_specs, residue_s
     except OSError:
         pass
 
+    out_dir = Path(out_dir, "docking")
+    run_name = "run-" + Path(molecules[0]).stem + "-" + Path(molecules[1]).stem
+
+    os.makedirs(Path(out_dir, run_name + "-files"))
+    filepath = Path(out_dir, run_name + "-files")
+
     if len(chains) == 2:
+
         if chains[0] != ["ALL"]:
-            select_chain(out_dir, molecules[0], chains[0])
+            molecules[0] = select_chain(filepath, molecules[0], chains[0])
+            
         elif chains[1] != ["ALL"]:
-            select_chain(out_dir, molecules[1], chains[1])
+            molecules[1] = select_chain(filepath, molecules[1], chains[1])
+
     else: 
         raise Exception("Please provide only one list of chains to keep per molecule.")
 
-    config_path = "../docking_inputs/config.cfg"
+    config_path = "./docking_inputs/config.cfg"
     config_dict = load(config_path)['loaded_cleaned_input']
-    config_path = Path(out_dir, "docking", config_file)
-
-    run_name = "run-" + Path(molecules[0]).stem + "-" + Path(molecules[1]).stem
-    config_dict['run_dir'] = Path(out_dir, "docking", run_name)
+    config_path = Path(filepath, config_file)
+    
+    config_dict['run_dir'] = Path(out_dir, run_name)
     config_dict['molecules'] = molecules
 
-    ambig_fname = Path(out_dir, "docking", "ambig_fname")
+    ambig_fname = Path(filepath, "ambig_fname")
     generate_tbl(ambig_fname, molecules, motif_specs[0], residue_specs)
 
     config_dict['rigidbody.1']['ambig_fname'] = ambig_fname   # it0
