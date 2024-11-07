@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 from Bio import PDB
 
 def pdb_to_sequence(pdb_file, *args):

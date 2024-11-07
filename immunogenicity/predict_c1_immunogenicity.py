@@ -1,11 +1,8 @@
 import os, sys
 from optparse import OptionParser
 import pandas as pd
+from immunogenicity.utils import pdb_to_sequence
 
-if __name__ == '__main__':
-    from immunogenicity.utils.pdb_to_sequence import *
-else: 
-    from immunogenicity.utils import pdb_to_sequence    
 
 import argparse
 from Bio import PDB
@@ -25,12 +22,14 @@ def sliding_window_string(s, k):
 
 def predict_c1_immunogenicity(pdb_fpath, c_allele="HLA-A0101", c_window_size=9, custom_mask=None): 
     """
-    this wrapper around the model to predict CLass I immunogenicity (http://tools.iedb.org/immunogenicity/)
-    takes in an amino acid, constructs a set of strings of length c_window_size and predicts binding to the
+    this wrapper around the model is used to predict CLass I immunogenicity (http://tools.iedb.org/immunogenicity/)
+    and takes in an amino acid, constructs a set of strings of length c_window_size and predicts binding to the
     c_allele choice and returns a dataframe over all peptides along with the allele and length information. 
 
     Specifically, this model uses features of the amino acid sequence to predict the immunogenicity of the 
     pMHC COMPLEX and not MHC I binding alone. 
+
+    a higher score indicates a higher probability of the pMHC to be immunogenic, scores are from -1 to 1
     """
     aa_seq = pdb_to_sequence(pdb_fpath)
     parsed_seq = sliding_window_string(aa_seq, c_window_size).split()

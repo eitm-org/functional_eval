@@ -4,7 +4,7 @@ setup(
       name='functional_eval',
       version='0.0.1',
       description='functional evaluation pipeline for SALT workflow',
-      packages=['physiochemical', 'docking', 'immunogenicity', 'docking.utils'],
+      packages=['physiochemical', 'docking', 'immunogenicity', 'docking.utils', 'immunogenicity.utils'],
       install_requires=[
             'tqdm',
             'numpy',
