@@ -1,7 +1,7 @@
 import os, sys
 from optparse import OptionParser
 import pandas as pd
-from immunogenicity.utils import pdb_to_sequence
+from immunogenicity.utils import pdb_to_sequence as p2s
 
 
 import argparse
@@ -31,7 +31,7 @@ def predict_c1_immunogenicity(pdb_fpath, c_allele="HLA-A0101", c_window_size=9, 
 
     a higher score indicates a higher probability of the pMHC to be immunogenic, scores are from -1 to 1
     """
-    aa_seq = pdb_to_sequence(pdb_fpath)
+    aa_seq = p2s.pdb_to_sequence(pdb_fpath)
     parsed_seq = sliding_window_string(aa_seq, c_window_size).split()
 
     pred = Prediction()
