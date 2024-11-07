@@ -1,3 +1,4 @@
+import glob
 import os, sys
 from optparse import OptionParser
 import pandas as pd
@@ -7,6 +8,15 @@ from immunogenicity.utils import pdb_to_sequence as p2s
 import argparse
 from Bio import PDB
 
+
+def eval_immunogenicity(results_dir, c_allele="HLA-A0101", c_window_size=9, custom_mask=None): 
+    files =  glob.glob(os.path.join(results_dir, 'designability_eval', 'designs', '*.pdb'))
+    
+    for PDBFile in files:
+        design_name = os.path.splitext(os.path.basename(PDBFile))[0]
+        immungenicity_scores = predict_c1_immunogenicity(PDBFile, c_allele, c_window_size, custom_mask)
+        immungenicity_scores.to_csv(os.path.join(results_dir, f"functional_eval/c1_immunogenicity_{design_name}.csv"))
+    
 def sliding_window_string(s, k):
     """
     for a given string representing a linear sequence of amino acids 
@@ -18,7 +28,7 @@ def sliding_window_string(s, k):
         raise RuntimeError("window size larger than length of string")
     
     return "\n".join(s[i:i+k] for i in range(len(s) - k + 1))
-    
+
 
 def predict_c1_immunogenicity(pdb_fpath, c_allele="HLA-A0101", c_window_size=9, custom_mask=None): 
     """
@@ -222,9 +232,9 @@ args    = ['example/test.txt']
 options = {'allele': None, 'allele_list': False, 'custom_mask': '2,3,9'}
 """
 if __name__ == '__main__':
-    test_path = "/home/xchen/projects/salt/results_rfdiffusion_denovo_20241018225424/generation/rf_design_0.pdb"
-    a = predict_c1_immunogenicity(test_path,"HLA-A0201",9)
-    print(a.head())
+    test_path = ""
+    eval_immunogenicity(test_path)
+    
 
 
 
