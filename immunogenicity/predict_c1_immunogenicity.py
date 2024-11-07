@@ -6,22 +6,36 @@ import argparse
 from Bio import PDB
 
 def sliding_window_string(s, k):
+    """
+    for a given string representing a linear sequence of amino acids 
+    this will return an array of strings with a newline space using a 
+    sliding window of size k and wil throw a runtime error if  s < k
+    """
+    
+    if(len(s) < k): 
+        raise RuntimeError("window size larger than length of string")
+    
     return "\n".join(s[i:i+k] for i in range(len(s) - k + 1))
     
 
-def predict_t_cell_immunogenicity(fpath): 
-    aa_seq = pdb_to_sequence(fpath)
-    parsed_seq = sliding_window_string(aa_seq, 9).split()
+def predict_c1_immunogenicity(pdb_fpath, c_allele="HLA-A0101", c_window_size=9, custom_mask=None): 
+    """
+    this wrapper around the model to predict CLass I immunogenicity (http://tools.iedb.org/immunogenicity/)
+    takes in an amino acid, constructs a set of strings of length c_window_size and predicts binding to the
+    c_allele choice and returns a dataframe over all peptides along with the allele and length information. 
+
+    Specifically, this model uses features of the amino acid sequence to predict the immunogenicity of the 
+    pMHC COMPLEX and not MHC I binding alone. 
+    """
+    aa_seq = pdb_to_sequence(pdb_fpath)
+    parsed_seq = sliding_window_string(aa_seq, c_window_size).split()
 
     pred = Prediction()
 
-    """
-    binding prediction to HLA-A0101 
-    """
     prediction_options = {
-        "allele": "HLA-A0101" #predict binding to human leukocyte antigen
+        "allele": str(c_allele), #predict binding to human leukocyte antigen
+        "custom_mask": custom_mask
     }
-    # pred.predict(pred.prep_EIT(parsed_seq,prediction_options,None))
 
     return pred.predict(pred.prep_EIT(parsed_seq,prediction_options,None))
 
@@ -39,21 +53,16 @@ class Prediction():
         else: return a == b
     
     def prep_EIT(self, seq, options, args): 
-        
-        return seq, None, options["allele"]
 
-    def validate(self, options, args):
-        
         allele_dict = {"H-2-Db":"2,5,9","H-2-Dd":"2,3,5","H-2-Kb":"2,3,9","H-2-Kd":"2,5,9","H-2-Kk":"2,8,9","H-2-Ld":"2,5,9","HLA-A0101":"2,3,9","HLA-A0201":"1,2,9","HLA-A0202":"1,2,9","HLA-A0203":"1,2,9","HLA-A0206":"1,2,9","HLA-A0211":"1,2,9","HLA-A0301":"1,2,9","HLA-A1101":"1,2,9","HLA-A2301":"2,7,9","HLA-A2402":"2,7,9","HLA-A2601":"1,2,9","HLA-A2902":"2,7,9","HLA-A3001":"1,3,9","HLA-A3002":"2,7,9","HLA-A3101":"1,2,9","HLA-A3201":"1,2,9","HLA-A3301":"1,2,9","HLA-A6801":"1,2,9","HLA-A6802":"1,2,9","HLA-A6901":"1,2,9","HLA-B0702":"1,2,9","HLA-B0801":"2,5,9","HLA-B1501":"1,2,9","HLA-B1502":"1,2,9","HLA-B1801":"1,2,9","HLA-B2705":"2,3,9","HLA-B3501":"1,2,9","HLA-B3901":"1,2,9","HLA-B4001":"1,2,9","HLA-B4002":"1,2,9","HLA-B4402":"2,3,9","HLA-B4403":"2,3,9","HLA-B4501":"1,2,9","HLA-B4601":"1,2,9","HLA-B5101":"1,2,9","HLA-B5301":"1,2,9","HLA-B5401":"1,2,9","HLA-B5701":"1,2,9","HLA-B5801":"1,2,9"}
 
-        sequence_text = open(args[0], "r").read().split()
-        for peptide in sequence_text:
+        for peptide in seq:
             for amino_acid in peptide.strip():
                 if not amino_acid.upper() in "ACDEFGHIKLMNPQRSTVWY":
                     print("Sequence: '%s' contains an invalid character: '%c' at position %d." %(peptide, amino_acid, peptide.find(amino_acid)))
                     sys.exit(1)
 
-        custom_mask = options.custom_mask
+        custom_mask = options["custom_mask"]
         
         if custom_mask:
             custom_mask_list = list(map(int, custom_mask.split(",")))
@@ -62,7 +71,7 @@ class Prediction():
                 sys.exit(1)
 
             max_length = max(custom_mask_list)
-            if not all([len(sequence) >= max_length for sequence in sequence_text]):
+            if not all([len(sequence) >= max_length for sequence in seq]):
                 print("custom length '{}' cannot be greater then the peptide length.".format(max_length))
                 sys.exit(1)
 
@@ -71,7 +80,7 @@ class Prediction():
                 print("custom-mask should be a single number or comma-separated list of numbers.")
                 sys.exit(1)
         
-        allele = options.allele
+        allele = options["allele"]
         allele = allele.replace("*","").replace(":","") if allele else None
         
         # Check if both custom_mask and allele options given
@@ -87,8 +96,8 @@ class Prediction():
             if allele not in allele_dict:
                 print("Allele {} is not available.".format(allele))
                 sys.exit(1)
-                
-        return sequence_text, custom_mask, allele
+
+        return seq, custom_mask, options["allele"]
     
     def predict(self, cleaned_data):
         '''Returns the prediction result.'''
@@ -209,11 +218,79 @@ args    = ['example/test.txt']
 options = {'allele': None, 'allele_list': False, 'custom_mask': '2,3,9'}
 """
 if __name__ == '__main__':
-    a = predict_t_cell_immunogenicity("/home/xchen/projects/salt/results_rfdiffusion_denovo_20241018225424/generation/rf_design_0.pdb")
-    print(a.head())
+    test_path = "/home/xchen/projects/salt/results_rfdiffusion_denovo_20241018225424/generation/rf_design_0.pdb"
+    a = predict_c1_immunogenicity(test_path,"HLA-A0201",9)
+    print(a.tail())
 
 
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+'''
+original validation function that was modified for EIT workflow
+    def validate(self, options, args):
+        
+        allele_dict = {"H-2-Db":"2,5,9","H-2-Dd":"2,3,5","H-2-Kb":"2,3,9","H-2-Kd":"2,5,9","H-2-Kk":"2,8,9","H-2-Ld":"2,5,9","HLA-A0101":"2,3,9","HLA-A0201":"1,2,9","HLA-A0202":"1,2,9","HLA-A0203":"1,2,9","HLA-A0206":"1,2,9","HLA-A0211":"1,2,9","HLA-A0301":"1,2,9","HLA-A1101":"1,2,9","HLA-A2301":"2,7,9","HLA-A2402":"2,7,9","HLA-A2601":"1,2,9","HLA-A2902":"2,7,9","HLA-A3001":"1,3,9","HLA-A3002":"2,7,9","HLA-A3101":"1,2,9","HLA-A3201":"1,2,9","HLA-A3301":"1,2,9","HLA-A6801":"1,2,9","HLA-A6802":"1,2,9","HLA-A6901":"1,2,9","HLA-B0702":"1,2,9","HLA-B0801":"2,5,9","HLA-B1501":"1,2,9","HLA-B1502":"1,2,9","HLA-B1801":"1,2,9","HLA-B2705":"2,3,9","HLA-B3501":"1,2,9","HLA-B3901":"1,2,9","HLA-B4001":"1,2,9","HLA-B4002":"1,2,9","HLA-B4402":"2,3,9","HLA-B4403":"2,3,9","HLA-B4501":"1,2,9","HLA-B4601":"1,2,9","HLA-B5101":"1,2,9","HLA-B5301":"1,2,9","HLA-B5401":"1,2,9","HLA-B5701":"1,2,9","HLA-B5801":"1,2,9"}
+
+        sequence_text = open(args[0], "r").read().split()
+        for peptide in sequence_text:
+            for amino_acid in peptide.strip():
+                if not amino_acid.upper() in "ACDEFGHIKLMNPQRSTVWY":
+                    print("Sequence: '%s' contains an invalid character: '%c' at position %d." %(peptide, amino_acid, peptide.find(amino_acid)))
+                    sys.exit(1)
+
+        custom_mask = options.custom_mask
+        
+        if custom_mask:
+            custom_mask_list = list(map(int, custom_mask.split(",")))
+            if sum(n < 0 for n in custom_mask_list) > 0:
+                print("custom-mask should be greater then zero.")
+                sys.exit(1)
+
+            max_length = max(custom_mask_list)
+            if not all([len(sequence) >= max_length for sequence in sequence_text]):
+                print("custom length '{}' cannot be greater then the peptide length.".format(max_length))
+                sys.exit(1)
+
+        if custom_mask:
+            if not all(self.isint(num) for num in custom_mask.split(",")):
+                print("custom-mask should be a single number or comma-separated list of numbers.")
+                sys.exit(1)
+        
+        allele = options.allele
+        allele = allele.replace("*","").replace(":","") if allele else None
+        
+        # Check if both custom_mask and allele options given
+        if custom_mask and allele:
+            print("* Allele {} has default value {}.\n* When both \'custom_mask\' and \'allele\' options are used, latter takes precedence over former.\n".format(allele, allele_dict[allele], '--custom_mask'))
+        
+        # Check if allele is included in the available alleles
+        if allele in allele_dict:
+            custom_mask = allele_dict[allele]
+        
+        # Check if allele option is used and is in the available alleles
+        if allele:
+            if allele not in allele_dict:
+                print("Allele {} is not available.".format(allele))
+                sys.exit(1)
+                
+        return sequence_text, custom_mask, allele
+'''
 
