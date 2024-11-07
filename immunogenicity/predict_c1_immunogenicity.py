@@ -1,7 +1,12 @@
 import os, sys
 from optparse import OptionParser
 import pandas as pd
-from pdb_to_sequence import *
+
+if __name__ == '__main__':
+    from immunogenicity.utils.pdb_to_sequence import *
+else: 
+    from immunogenicity.utils import pdb_to_sequence    
+
 import argparse
 from Bio import PDB
 
@@ -220,7 +225,7 @@ options = {'allele': None, 'allele_list': False, 'custom_mask': '2,3,9'}
 if __name__ == '__main__':
     test_path = "/home/xchen/projects/salt/results_rfdiffusion_denovo_20241018225424/generation/rf_design_0.pdb"
     a = predict_c1_immunogenicity(test_path,"HLA-A0201",9)
-    print(a.tail())
+    print(a.head())
 
 
 
