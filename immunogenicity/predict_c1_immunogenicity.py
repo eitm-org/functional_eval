@@ -17,7 +17,7 @@ def eval_immunogenicity(results_dir, c_allele="HLA-A0101", c_window_size=9, cust
         immungenicity_scores = predict_c1_immunogenicity(PDBFile, c_allele, c_window_size, custom_mask)
         immungenicity_scores.to_csv(os.path.join(results_dir, f"functional_eval/c1_immunogenicity_{design_name}.csv"))
     
-def sliding_window_string(s, k):
+def sliding_window_string(s, k, mask_arr):
     """
     for a given string representing a linear sequence of amino acids 
     this will return an array of strings with a newline space using a 
@@ -41,8 +41,12 @@ def predict_c1_immunogenicity(pdb_fpath, c_allele="HLA-A0101", c_window_size=9, 
 
     a higher score indicates a higher probability of the pMHC to be immunogenic, scores are from -1 to 1
     """
+
+    if(custom_mask): 
+        raise RuntimeError("still a work in progress, we default the masking of the 1, 2, and c-terminus positions")
+    
     aa_seq = p2s.pdb_to_sequence(pdb_fpath)
-    parsed_seq = sliding_window_string(aa_seq, c_window_size).split()
+    parsed_seq = sliding_window_string(aa_seq, c_window_size, custom_mask).split()
 
     pred = Prediction()
 
@@ -227,10 +231,6 @@ class Prediction():
 -------------------------------------------------------------------------
 """
 
-"""
-args    = ['example/test.txt']
-options = {'allele': None, 'allele_list': False, 'custom_mask': '2,3,9'}
-"""
 if __name__ == '__main__':
     test_path = ""
     eval_immunogenicity(test_path)
