@@ -131,9 +131,9 @@ def build_config(out_dir, config_file, molecules, chains, motif_specs, residue_s
     else: 
         raise Exception("Please provide only one list of chains to keep per molecule.")
 
-    config_path = "./docking_inputs/config.cfg"
+    config_path = config_file
     config_dict = load(config_path)['loaded_cleaned_input']
-    config_path = Path(filepath, config_file)
+    config_path = Path(filepath, os.path.basename(config_file))
     
     config_dict['run_dir'] = Path(out_dir, run_name)
     config_dict['molecules'] = molecules
