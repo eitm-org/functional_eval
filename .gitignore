@@ -61,3 +61,7 @@ target/
 # virtual env
 venv/
 src/
+
+# mhcii data artifacts
+immunogenicity/utils/*
+# immunogenicity/utils/pdb_to_sequence.py
