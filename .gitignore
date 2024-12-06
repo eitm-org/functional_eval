@@ -63,5 +63,5 @@ venv/
 src/
 
 # mhcii data artifacts
-immunogenicity/utils/*
+immunogenicity/utils/mhcii_42/
 # immunogenicity/utils/pdb_to_sequence.py
