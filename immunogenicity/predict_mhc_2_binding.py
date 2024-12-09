@@ -8,18 +8,18 @@ from collections import namedtuple
 """
 local imports
 """
-from utils.pdb_to_fasta import pdb_to_fasta as p2f
-from utils.pdb_to_sequence import pdb_to_sequence as p2s
-from utils.mhcii_42.mhcii_netmhciipan_4_2.mhcii_netmhciipan_4_2_el_percentile_data import percentile_manager as mhcii_netmhciipan_42_el_percentile_manager
-from utils.mhcii_42.netmhciipan_4_2_executable.netmhciipan_4_2_executable import single_prediction as single_prediction_netmhciipan42
+# from utils.pdb_to_fasta import pdb_to_fasta as p2f
+# from utils.pdb_to_sequence import pdb_to_sequence as p2s
+# from utils.mhcii_42.mhcii_netmhciipan_4_2.mhcii_netmhciipan_4_2_el_percentile_data import percentile_manager as mhcii_netmhciipan_42_el_percentile_manager
+# from utils.mhcii_42.netmhciipan_4_2_executable.netmhciipan_4_2_executable import single_prediction as single_prediction_netmhciipan42
 
 """
 imports via env
 """
-# from immunogenicity.utils import pdb_to_fasta as p2f
-# from immunogenicity.utils import pdb_to_sequence as p2s
-# from immunogenicity.utils.mhcii_netmhciipan_4_2.mhcii_netmhciipan_4_2_el_percentile_data import percentile_manager as mhcii_netmhciipan_42_el_percentile_manager
-# from immunogenicity.utils.netmhciipan_4_2_executable.netmhciipan_4_2_executable import single_prediction as single_prediction_netmhciipan42
+from immunogenicity.utils import pdb_to_fasta as p2f
+from immunogenicity.utils import pdb_to_sequence as p2s
+from immunogenicity.utils.mhcii_netmhciipan_4_2.mhcii_netmhciipan_4_2_el_percentile_data import percentile_manager as mhcii_netmhciipan_42_el_percentile_manager
+from immunogenicity.utils.netmhciipan_4_2_executable.netmhciipan_4_2_executable import single_prediction as single_prediction_netmhciipan42
 
 
 
