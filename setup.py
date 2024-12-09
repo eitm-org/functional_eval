@@ -27,7 +27,6 @@ def install_mhc2_req():
     else:
         print(f"Failed to download file. HTTP status code: {response.status_code}")
 
-install_mhc2_req()
 
 setup(
       name='functional_eval',
@@ -44,4 +43,6 @@ setup(
             'pytorch_lightning'
       ],
 )
+
+install_mhc2_req()
 
