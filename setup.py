@@ -4,9 +4,9 @@ import requests
 import tarfile
 
 def install_mhc2_req(): 
-    mhcii_42_url = "https://www.dropbox.com/scl/fi/ukm72ba6uz6bapiv6ckuc/mhcii_42.tar.gz?rlkey=l3rkcz0hh29tnevhdh76zpw91&st=lblu04w3&dl=0"
+    mhcii_42_url = "https://www.dropbox.com/scl/fi/ukm72ba6uz6bapiv6ckuc/mhcii_42.tar.gz?rlkey=l3rkcz0hh29tnevhdh76zpw91&st=lblu04w3&dl=1"
     immunogenicity_utils_dir = os.path.join(os.path.dirname(__file__), 'immunogenicity', 'utils')
-    tar_fpath = os.path.join(immunogenicity_utils_dir, 'mhcii_42.tar.gz')
+    tar_fpath = os.path.join(immunogenicity_utils_dir, 'temp_mhcii42.tar.gz')
 
     print(f"Downloading {mhcii_42_url}...")
     response = requests.get(mhcii_42_url)
@@ -18,7 +18,7 @@ def install_mhc2_req():
 
         # Unpack the tar file
         print(f"Unpacking {tar_fpath}...")
-        with tarfile.open(tar_fpath, 'r:gz') as tar:
+        with tarfile.open(tar_fpath, 'r') as tar:
             tar.extractall(path=immunogenicity_utils_dir)
         print(f"File unpacked to {immunogenicity_utils_dir}")
         # Optionally, delete the tar file after unpacking (if not needed)
@@ -44,3 +44,4 @@ setup(
             'pytorch_lightning'
       ],
 )
+

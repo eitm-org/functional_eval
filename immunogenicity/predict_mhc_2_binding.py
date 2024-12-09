@@ -57,7 +57,7 @@ def do_netmhciipan_42_el_prediction(sequence_list, allele_length_pairs, coreseq_
         for row in single_prediction_result: 
              if(len(row) != 11): 
                 row.append('NA')
-                
+
         mhcii_col_names = [
             "pos", "mhc_allele", "peptide", "of", "core", "core_rel", 
             "identity", "score_el", "percentile_rank_el", "exp_bin", "bind_level"
@@ -78,9 +78,9 @@ def predict_mhc_2_binding(pdb_file, window_size=15, allele_name="DRB1*01:01"):
 
 if __name__ == "__main__":  
     #single test
-    # pdb_file = "/home/ntangella/test_data/results_genie2_motif_20241016234531/generation/8hgo_0.pdb"
-    # df = predict_mhc_2_binding(pdb_file)
-    # print(df.head())
+    pdb_file = "/home/ntangella/test_data/results_genie2_motif_20241016234531/generation/8hgo_0.pdb"
+    df = predict_mhc_2_binding(pdb_file)
+    print(df.head())
 
     #batch test
     # results_dir = "/home/ntangella/test_data/results_genie2_motif_20241016234531"
