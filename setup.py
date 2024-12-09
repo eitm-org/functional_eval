@@ -22,8 +22,8 @@ def install_mhc2_req():
             tar.extractall(path=immunogenicity_utils_dir)
         print(f"File unpacked to {immunogenicity_utils_dir}")
         # Optionally, delete the tar file after unpacking (if not needed)
-        os.remove(tar_fpath)
-        print(f"Tar file removed: {tar_fpath}")
+      #   os.remove(tar_fpath)
+      #   print(f"Tar file removed: {tar_fpath}")
     else:
         print(f"Failed to download file. HTTP status code: {response.status_code}")
 
