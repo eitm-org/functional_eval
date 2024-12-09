@@ -23,7 +23,7 @@ from immunogenicity.utils.mhcii_42.netmhciipan_4_2_executable.netmhciipan_4_2_ex
 
 
 
-def eval_immunogenicity(results_dir, window_size=15, allele_name="DRB1*01:01"): 
+def eval_mhc2_binding(results_dir, window_size=15, allele_name="DRB1*01:01"): 
     files =  glob.glob(os.path.join(results_dir, 'designability_eval', 'designs', '*.pdb'))
     
     for PDBFile in files:
