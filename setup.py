@@ -29,6 +29,10 @@ def install_mhc2_req():
         print(f"Failed to download file. HTTP status code: {response.status_code}")
 
 
+    return 
+
+install_mhc2_req()
+
 setup(
       name='functional_eval',
       version='0.0.1',
@@ -45,5 +49,4 @@ setup(
       ],
 )
 
-install_mhc2_req()
 
