@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 import requests
 import tarfile
 
-def install_mhc2_req(): 
+def install_mhc2_artifacts(): 
     mhcii_42_url = "https://www.dropbox.com/scl/fi/ukm72ba6uz6bapiv6ckuc/mhcii_42.tar.gz?rlkey=l3rkcz0hh29tnevhdh76zpw91&st=lblu04w3&dl=1"
     immunogenicity_utils_dir = os.path.join(os.path.dirname(__file__))
     tar_fpath = os.path.join(immunogenicity_utils_dir, 'temp_mhcii42.tar.gz')

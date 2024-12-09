@@ -18,8 +18,8 @@ imports via env
 """
 from immunogenicity.utils import pdb_to_fasta as p2f
 from immunogenicity.utils import pdb_to_sequence as p2s
-from immunogenicity.utils.mhcii_netmhciipan_4_2.mhcii_netmhciipan_4_2_el_percentile_data import percentile_manager as mhcii_netmhciipan_42_el_percentile_manager
-from immunogenicity.utils.netmhciipan_4_2_executable.netmhciipan_4_2_executable import single_prediction as single_prediction_netmhciipan42
+from immunogenicity.utils.mhcii_42.mhcii_netmhciipan_4_2.mhcii_netmhciipan_4_2_el_percentile_data import percentile_manager as mhcii_netmhciipan_42_el_percentile_manager
+from immunogenicity.utils.mhcii_42.netmhciipan_4_2_executable.netmhciipan_4_2_executable import single_prediction as single_prediction_netmhciipan42
 
 
 
@@ -71,7 +71,7 @@ def do_netmhciipan_42_el_prediction(sequence_list, allele_length_pairs, coreseq_
    
 def predict_mhc_2_binding(pdb_file, window_size=15, allele_name="DRB1*01:01"): 
     
-    seq = p2s(pdb_file) 
+    seq = p2s.pdb_to_sequence(pdb_file) 
     parsed_allele=allele_name
     pair = tuple((parsed_allele, window_size))
     return do_netmhciipan_42_el_prediction(seq, pair)
