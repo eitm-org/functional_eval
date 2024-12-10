@@ -8,9 +8,9 @@ def install_netmhc42_artifacts():
     mhcii_42_url = "https://www.dropbox.com/scl/fi/ukm72ba6uz6bapiv6ckuc/mhcii_42.tar.gz?rlkey=l3rkcz0hh29tnevhdh76zpw91&st=lblu04w3&dl=1"
     immunogenicity_utils_dir = os.path.join(os.path.dirname(__file__))
 
-    if os.path.isdir("./mhcii_42"):
+    if 'mhcii_42' in os.listdir(immunogenicity_utils_dir):
         return
-
+    
     tar_fpath = os.path.join(immunogenicity_utils_dir, 'temp_mhcii42.tar.gz')
 
     print(f"Downloading {mhcii_42_url}...")
@@ -32,5 +32,7 @@ def install_netmhc42_artifacts():
     else:
         print(f"Failed to download file. HTTP status code: {response.status_code}")
 
-
     return 
+
+if __name__== "__main__": 
+    install_netmhc42_artifacts()
