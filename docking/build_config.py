@@ -125,7 +125,7 @@ def build_config(out_dir, config_file, molecules, chains, motif_specs, residue_s
         if chains[0] != ["ALL"]:
             molecules[0] = select_chain(filepath, molecules[0], chains[0])
             
-        elif chains[1] != ["ALL"]:
+        if chains[1] != ["ALL"]:
             molecules[1] = select_chain(filepath, molecules[1], chains[1])
 
     else: 
