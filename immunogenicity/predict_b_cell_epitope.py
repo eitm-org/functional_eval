@@ -11,14 +11,14 @@ import shutil
 """
 local imports
 """
-from utils.pdb_to_sequence import pdb_to_sequence as p2s
-from utils.bp3 import bepipred3 as bp3
+# from utils.pdb_to_sequence import pdb_to_sequence as p2s
+# from utils.bp3 import bepipred3 as bp3
 
 """
 env imports
 """
-# from immunogenicity.utils.pdb_to_sequence import pdb_to_sequence as p2s
-# from immunogenicity.utils.bp3 import bepipred3 as bp3
+from immunogenicity.utils.pdb_to_sequence import pdb_to_sequence as p2s
+from immunogenicity.utils.bp3 import bepipred3 as bp3
 
 def eval_b_cell_epitope(results_dir, window_size=10): 
     files =  glob.glob(os.path.join(results_dir, 'designability_eval', 'designs', '*.pdb'))
