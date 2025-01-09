@@ -6,6 +6,8 @@ import tarfile
 
 
 def initialize_bepipred30_artifacts(): 
+
+    os.makedirs("BP3Models")
     id_ffnn_url = "https://www.dropbox.com/scl/fi/00dtksfzib6ll9z02isbo/BP3C50IDFFNN.tar.gz?rlkey=vspz0kr5urs9wwb76jmysb9oj&st=b36o52p5&dl=1"
     seqlen_ffnn_url = "https://www.dropbox.com/scl/fi/e3z0zszjq5nz0c5w0j2nz/BP3C50IDSeqLenFFNN.tar.gz?rlkey=ccqnw7ie6br17r6twkap8z4nn&st=h0vsygsr&dl=1"
 
