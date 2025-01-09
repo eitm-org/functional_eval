@@ -65,6 +65,8 @@ src/
 # mhcii data artifacts
 immunogenicity/utils/mhcii_42/
 immunogenicity/utils/mhcii_42.tar.gz
+immunogenicity/utils/bp3/BP3Models/BP3C50IDFFNN/
+immunogenicity/utils/bp3/BP3Models/BP3C50IDSeqLenFFNN/
 # immunogenicity/utils/pdb_to_sequence.py
 
 #vscode 
