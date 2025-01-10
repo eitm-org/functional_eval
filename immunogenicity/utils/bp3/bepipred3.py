@@ -134,7 +134,7 @@ class Antigens():
         num_of_seqs = len(self.seqs)
         #self.create_fasta_for_esm_transformer()
         self.add_seq_len = add_seq_len
-        print(f"Number of sequences detected in fasta file: {num_of_seqs}")
+        print(f"Number of sequences detected: {num_of_seqs}")
         print(f"ESM-2 encoding sequences. Saving encodings to {str(esm_encoding_dir)}")
         self.esm_encoding_paths = self.get_esm2_represention_on_accs_seqs()
         self.ensemble_preds = None

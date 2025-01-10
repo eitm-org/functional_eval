@@ -21,6 +21,11 @@ from immunogenicity.utils.pdb_to_sequence import pdb_to_sequence as p2s
 from immunogenicity.utils.bp3 import bepipred3 as bp3
 
 def eval_b_cell_epitope(results_dir, window_size=10): 
+    """
+    this wrapper around bepipred 3.0 calls a random forest model to predict the probability that a given sequence
+    will be recognized as a b cell antigen. 
+    ref: https://pubmed.ncbi.nlm.nih.gov/36366745/
+    """
     files =  glob.glob(os.path.join(results_dir, 'designability_eval', 'designs', '*.pdb'))
     save_dir = os.path.join(results_dir, 'functional_eval')
     
