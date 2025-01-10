@@ -35,11 +35,6 @@ def pdb_to_fasta(pdb_file, *args):
     return fasta_string
             
 
-
-
-
-
-
 if __name__ == "__main__": 
     pdb_file = "/home/ntangella/test_data/results_genie2_motif_20241016234531/generation/8hgo_0.pdb"
     fasta_seq = pdb_to_fasta(pdb_file)   
