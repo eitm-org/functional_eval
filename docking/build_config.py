@@ -52,40 +52,31 @@ def convert_motif_to_dict(input_str, name):
 
     return result
 
-def generate_tbl(ambig_fname, molecules, motif_specs, residue_specs):
+def generate_tbl(ambig_fname, molecules, candidate_specs, target_specs):
 
     mol1 = molecules[0]
     mol2 = molecules[1]
 
-    if residue_specs != None or len(residue_specs) == 0 or len(residue_specs) > 2: # determining active / passive residues using motif specs
-        if len(residue_specs) == 1:
-            mol2_active_list = residue_specs[0]
+    if candidate_specs != None:
+        if len(candidate_specs) == 1: # motif dict
+            mol1_dict = convert_motif_to_dict(candidate_specs[0], Path(molecules[0]).stem)
+            mol1_active_list = []
+            for struct in mol1_dict['structures']:
+                if struct['type'] == 'motif':
+                    mol1_active_list += list(range(struct['start_index'], struct['end_index'] + 1))
+        else: # user specified residues
+            mol1_active_list = candidate_specs
+        
+        mol1_passive_list = passive_from_active.run(pdb_file = mol1, active_list=mol1_active_list)  
+    else:
+        raise Exception('Specify a list of active residues for non-generated protein or both proteins')  
+
+    if target_specs != None:
+            mol2_active_list = target_specs
             mol2_passive_list = passive_from_active.run(pdb_file = mol2, active_list=mol2_active_list)
-            
-        elif len(residue_specs) == 2:
-            # overrides active residues determined from config file and sets them based on user provided list
-
-            mol1_active_list = residue_specs[0]
-            mol2_active_list = residue_specs[1]
-
-            mol1_passive_list = passive_from_active.run(pdb_file = mol1, active_list=mol1_active_list)
-            mol2_passive_list = passive_from_active.run(pdb_file = mol2, active_list=mol2_active_list)
-
-            motif_specs = None
     else:
         raise Exception('Specify a list of active residues for non-generated protein or both proteins')
-            
-
-    if motif_specs != None:
-        # pulling configs from diffusion motif specification
-        mol1_dict = convert_motif_to_dict(motif_specs, Path(molecules[0]).stem)
-        mol1_active_list = []
-
-        for struct in mol1_dict['structures']:
-            if struct['type'] == 'motif':
-                mol1_active_list += list(range(struct['start_index'], struct['end_index'] + 1))
-        mol1_passive_list = passive_from_active.run(pdb_file = mol1, active_list=mol1_active_list)
-                
+    
     ambig_fname = active_passive_to_ambig.active_passive_to_ambig(ambig_fname, mol1_active_list, mol1_passive_list, mol2_active_list, mol2_passive_list)
     return ambig_fname
 
@@ -107,7 +98,7 @@ def select_chain(out_dir, fpath, chain_set):
     
     return Path(out_dir, molname)
 
-def build_config(out_dir, config_file, molecules, chains, motif_specs, residue_specs):
+def build_config(out_dir, config_file, molecules, chains, candidate_specs, target_specs):
 
     try:
         os.makedirs(Path(out_dir, "docking"))
@@ -139,7 +130,7 @@ def build_config(out_dir, config_file, molecules, chains, motif_specs, residue_s
     config_dict['molecules'] = molecules
 
     ambig_fname = Path(filepath, "ambig_fname")
-    generate_tbl(ambig_fname, molecules, motif_specs[0], residue_specs)
+    generate_tbl(ambig_fname, molecules, candidate_specs, target_specs)
 
     config_dict['rigidbody.1']['ambig_fname'] = ambig_fname   # it0
     config_dict['flexref.1']['ambig_fname'] = ambig_fname   # it1
