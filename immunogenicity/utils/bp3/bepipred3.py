@@ -298,13 +298,12 @@ class BP3EnsemblePredict():
         self.rolling_window_size = rolling_window_size 
         self.top_pred_pct = top_pred_pct
 
-        self.device = "cpu"
 
-        #TODO: use gpus if possible for prediction
-        # if device is None:
-        #     self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        # else:
-        #     self.device = device
+        
+        if device is None:
+            self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        else:
+            self.device = device
             
         if antigens.add_seq_len:
             self.model_architecture = MyDenseNetWithSeqLen()
