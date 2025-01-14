@@ -236,7 +236,7 @@ class Prediction():
 """
 
 if __name__ == '__main__':
-    test_path = "/home/ntangella/test_data/results_genie2_motif_20241016234531/"
+    test_path = ""
     eval_immunogenicity(test_path)
     
 

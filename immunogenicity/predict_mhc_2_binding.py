@@ -86,7 +86,7 @@ if __name__ == "__main__":
     # df = predict_mhc_2_binding(pdb_file)
 
     #batch test
-    results_dir = "/home/ntangella/test_data/results_genie2_motif_20241016234531"
+    results_dir = ""
     eval_mhc2_binding(results_dir)
 
 

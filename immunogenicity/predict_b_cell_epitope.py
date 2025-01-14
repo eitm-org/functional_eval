@@ -69,6 +69,6 @@ if __name__ == "__main__":
     # predict_b_cell_epitope(aa_seq, extract_pdb_fname(test_pdb))
 
     #batch test 
-    dir_name = "/home/ntangella/test_data/results_genie2_motif_20241016234531/"
+    dir_name = ""
     eval_b_cell_epitope(dir_name)
 
