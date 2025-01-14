@@ -27,7 +27,10 @@ def eval_b_cell_epitope(results_dir, window_size=10):
     ref: https://pubmed.ncbi.nlm.nih.gov/36366745/
     """
     files =  glob.glob(os.path.join(results_dir, 'designability_eval', 'designs', '*.pdb'))
-    save_dir = os.path.join(results_dir, 'functional_eval')
+    save_dir = os.path.join(results_dir, 'functional_eval', 'bepipred3')
+
+    if not os.path.exists(save_dir): 
+        os.makedirs(save_dir)
     
     for PDBFile in files:
         predict_b_cell_epitope(PDBFile, save_dir, window_size=window_size)
@@ -66,6 +69,6 @@ if __name__ == "__main__":
     # predict_b_cell_epitope(aa_seq, extract_pdb_fname(test_pdb))
 
     #batch test 
-    dir_name = "/home/ntangella/test_data/results_genie2_motif_20241016234531/"
+    dir_name = ""
     eval_b_cell_epitope(dir_name)
 
