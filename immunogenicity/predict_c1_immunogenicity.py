@@ -11,11 +11,15 @@ from Bio import PDB
 
 def eval_immunogenicity(results_dir, c_allele="HLA-A0101", c_window_size=9, custom_mask=None): 
     files =  glob.glob(os.path.join(results_dir, 'designability_eval', 'designs', '*.pdb'))
+    save_dir = os.path.join(results_dir, 'functional_eval', 'c1_immunogenicity')
+
+    if not os.path.exists(save_dir): 
+        os.makedirs(save_dir)
     
     for PDBFile in files:
         design_name = os.path.splitext(os.path.basename(PDBFile))[0]
         immungenicity_scores = predict_c1_immunogenicity(PDBFile, c_allele, c_window_size, custom_mask)
-        immungenicity_scores.to_csv(os.path.join(results_dir, f"functional_eval/c1_immunogenicity_{design_name}.csv"))
+        immungenicity_scores.to_csv(os.path.join(save_dir, f"c1_immunogenicity_{design_name}.csv"))
     
 def sliding_window_string(s, k, mask_arr):
     """
@@ -232,7 +236,7 @@ class Prediction():
 """
 
 if __name__ == '__main__':
-    test_path = ""
+    test_path = "/home/ntangella/test_data/results_genie2_motif_20241016234531/"
     eval_immunogenicity(test_path)
     
 

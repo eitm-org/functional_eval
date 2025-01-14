@@ -25,11 +25,15 @@ from immunogenicity.utils.mhcii_42.netmhciipan_4_2_executable.netmhciipan_4_2_ex
 
 def eval_mhc2_binding(results_dir, window_size=15, allele_name="DRB1*01:01"): 
     files =  glob.glob(os.path.join(results_dir, 'designability_eval', 'designs', '*.pdb'))
+    save_dir = os.path.join(results_dir, 'functional_eval', 'netmhc2pan')
+
+    if not os.path.exists(save_dir): 
+        os.makedirs(save_dir)
     
     for PDBFile in files:
         design_name = os.path.splitext(os.path.basename(PDBFile))[0]
         mhc2_pred = predict_mhc_2_binding(PDBFile, window_size, allele_name)
-        mhc2_pred.to_csv(os.path.join(results_dir, f"functional_eval/mhc2_binding_{design_name}.csv"))
+        mhc2_pred.to_csv(os.path.join(save_dir, f"mhc2_binding_{design_name}.csv"))
                                                  
 def do_netmhciipan_42_el_prediction(sequence_list, allele_length_pairs, coreseq_len=9):
 
@@ -78,13 +82,12 @@ def predict_mhc_2_binding(pdb_file, window_size=15, allele_name="DRB1*01:01"):
 
 if __name__ == "__main__":  
     #single test
-    pdb_file = "/home/ntangella/test_data/results_genie2_motif_20241016234531/generation/8hgo_0.pdb"
-    df = predict_mhc_2_binding(pdb_file)
-    print(df.head())
+    # pdb_file = "/home/ntangella/test_data/results_genie2_motif_20241016234531/generation/8hgo_0.pdb"
+    # df = predict_mhc_2_binding(pdb_file)
 
     #batch test
-    # results_dir = "/home/ntangella/test_data/results_genie2_motif_20241016234531"
-    # eval_immunogenicity(results_dir)
+    results_dir = "/home/ntangella/test_data/results_genie2_motif_20241016234531"
+    eval_mhc2_binding(results_dir)
 
 
     
