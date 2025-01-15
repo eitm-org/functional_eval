@@ -5,6 +5,7 @@ from pathlib import Path
 from haddock.gear.config import load, save
 from docking.utils import passive_from_active
 from docking.utils import active_passive_to_ambig
+from docking.utils import pdb_reres
 
 def convert_motif_to_dict(input_str, name):
     input_ranges = input_str.split('/')
@@ -110,6 +111,9 @@ def build_config(out_dir, config_file, molecules, chains, candidate_specs, targe
 
     os.makedirs(Path(out_dir, run_name + "-files"))
     filepath = Path(out_dir, run_name + "-files")
+
+    molecules[0] = pdb_reres.run(molecules[0], 1)
+    molecules[1] = pdb_reres.run(molecules[1], 1)
 
     if len(chains) == 2:
 
