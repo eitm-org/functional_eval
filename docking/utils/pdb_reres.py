@@ -158,20 +158,19 @@ def run(fhandle, starting_resid):
 
         else:
             yield line
-        print(line)
         lines += [line]
 
 renumber_residues = run
 
 
-def main(pdb_file, resid = 1):
+def main(out_dir, pdb_file, resid = 1):
     # Check Input
     pdbfh, starting_resid = open(pdb_file, 'r'), resid #check_input(sys.argv[1:])
 
     # Do the job
     lines = run(pdbfh, starting_resid)
 
-    pdb_file = pdb_file.replace('.pdb', '_reres.pdb')
+    pdb_file = os.path.join(out_dir, Path(pdb_file).stem + '_reres.pdb')
     with open(pdb_file, 'w') as file:
         for line in lines:
             file.write(line)

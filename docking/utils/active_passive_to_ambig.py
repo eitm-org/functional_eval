@@ -6,7 +6,7 @@ ambiguous interaction restraints for HADDOCK
 """
 
 
-def active_passive_to_ambig(ambig_fname, active1, passive1, active2, passive2, segid1='A', segid2='B'):
+def active_passive_to_ambig(ambig_fname, active1, passive1, active2, passive2, segid1, segid2):
     """Convert active and passive residues to Ambiguous Interaction Restraints
 
     Parameters
@@ -40,25 +40,32 @@ def active_passive_to_ambig(ambig_fname, active1, passive1, active2, passive2, s
     all2 = active2 + passive2
     
     f = open(ambig_fname, 'w')
+
+    f.write('! HADDOCK AIR restraints\n')
+    f.write('! HADDOCK AIR restraints for 1st selection\n')
+    f.write('!\n')
     
     for resi1 in active1:
-        f.write('assign (resi {:d} and segid {:s})\n'.format(resi1, segid1))
+        f.write('assign (resid {:d} and segid {:s})\n'.format(resi1, segid1))
         f.write('(\n')
         c = 0
         for resi2 in all2:
-            f.write('       (resi {:d} and segid {:s})\n'.format(resi2, segid2))
+            f.write('       (resid {:d} and segid {:s})\n'.format(resi2, segid2))
             c += 1
             if c != len(all2):
                 f.write('        or\n')
 
         f.write(') 2.0 2.0 0.0\n')
+    
+    f.write('\n! HADDOCK AIR restraints for 2nd selection\n')
+    f.write('!\n')
             
     for resi2 in active2:
-        f.write('assign (resi {:d} and segid {:s})\n'.format(resi2, segid2))
+        f.write('assign (resid {:d} and segid {:s})\n'.format(resi2, segid2))
         f.write('(\n')
         c = 0
         for resi1 in all1:
-            f.write('       (resi {:d} and segid {:s})\n'.format(resi1, segid1))
+            f.write('       (resid {:d} and segid {:s})\n'.format(resi1, segid1))
             c += 1
             if c != len(all1):
                 f.write('        or\n')
