@@ -305,8 +305,8 @@ class BP3EnsemblePredict():
         else:
             self.device = device
         
-        self.device='cpu'
         
+
         if antigens.add_seq_len:
             self.model_architecture = MyDenseNetWithSeqLen()
             m_path = MODELS_PATH / "BP3C50IDSeqLenFFNN" 
