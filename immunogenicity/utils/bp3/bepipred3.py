@@ -304,7 +304,9 @@ class BP3EnsemblePredict():
             self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         else:
             self.device = device
-            
+        
+        
+
         if antigens.add_seq_len:
             self.model_architecture = MyDenseNetWithSeqLen()
             m_path = MODELS_PATH / "BP3C50IDSeqLenFFNN" 
