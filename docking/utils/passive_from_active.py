@@ -16,6 +16,8 @@ import contextlib
 
 try:
     from Bio.PDB import *
+    from Bio.PDB import PDBParser
+    from Bio.PDB import NeighborSearch
 except ImportError as e:
     print("Could not import BioPython\n{0}".format(e))
     sys.exit(1)
@@ -121,7 +123,7 @@ def stdchannel_redirected(stdchannel, dest_filename):
             dest_file.close()
 
 
-def get_surface_resids(structure, cutoff=15, config_path=os.environ.get('FREESASA_CONFIG')):
+def get_surface_resids(structure, cutoff=15, config_path="naccess.config"):
     """
     Calls freesasa using its Python API and returns
     per-residue accessibilities.
@@ -138,7 +140,10 @@ def get_surface_resids(structure, cutoff=15, config_path=os.environ.get('FREESAS
     _rsa_bb = rel_asa['bb']
     _rsa_sc = rel_asa['sc']
 
-    classifier = Classifier(config_path)
+    import site
+    site_packages = site.getsitepackages()
+    # os.path.join(site_packages[0], "docking", "utils", config_path)
+    classifier = Classifier()
     pkg_resources.cleanup_resources()
 
     with stdchannel_redirected(sys.stderr, os.devnull):
@@ -177,12 +182,12 @@ def get_surface_resids(structure, cutoff=15, config_path=os.environ.get('FREESAS
                       v['main_chain_rel'] >= cutoff]
     return surface_resids
 
-def run(pdb_file, active_list):
+def run(pdb_file, active_list, chain_id):
 
     args_parser = argparse.ArgumentParser()
     args_parser.add_argument('--pdb_file', type=str, help='PDB file', default = pdb_file)
     args_parser.add_argument('--active_list', type=list, help='List of active residues IDs (int) separated by commas', default = active_list)
-    args_parser.add_argument('-c', '--chain-id', type=str, help='Chain id to be used in the PDB file (default: All)')
+    args_parser.add_argument('-c', '--chain-id', type=str, help='Chain id to be used in the PDB file (default: All)', default = chain_id[0])
     args_parser.add_argument('-s', '--surface-list', type=str,
                              help='List of surface residues IDs (int) separated by commas')
 
@@ -201,7 +206,7 @@ def run(pdb_file, active_list):
         sys.exit(1)
 
     try:
-        if args.chain_id:
+        if args.chain_id != 'ALL':
             atom_list = [a for a in s[0][args.chain_id].get_atoms()]
         else:
             atom_list = [a for a in s[0].get_atoms()]
@@ -232,9 +237,15 @@ def run(pdb_file, active_list):
         neighbors.append(ns.search(a, 6.5, "R"))  # HADDOCK used 6.5A as default
 
     passive_list = set()
+
+    # if all residues should be passive
+    if active_list == []:
+        passive_list = set(surface_list)
+
     for n in neighbors:
         for r in n:
             passive_list.add(r.id[1])
     tmp = passive_list & set(surface_list)
     passive_list = tmp - set(active_list)
+
     return ' '.join([str(r) for r in sorted(passive_list)])
