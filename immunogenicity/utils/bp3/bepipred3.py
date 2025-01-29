@@ -285,7 +285,8 @@ class BP3EnsemblePredict():
                  antigens,
                  device = None,
                  rolling_window_size = 9,
-                 top_pred_pct=0.3):
+                 top_pred_pct=0.3, 
+                 gpu=False):
         """
         Inputs and initialization:
             antigens: Antigens class object
@@ -299,11 +300,11 @@ class BP3EnsemblePredict():
         self.top_pred_pct = top_pred_pct
 
 
-        
-        if device is None:
-            self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        if gpu: 
+            if device is None:
+                self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         else:
-            self.device = device
+            self.device = "cpu"
         
         
 
